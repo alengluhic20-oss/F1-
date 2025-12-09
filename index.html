@@ -570,7 +570,7 @@
             { name: 'Vitality', freq: 728 },
             { name: 'Wholeness', freq: 736 },
             { name: 'Completeness', freq: 744 },
-            { name: 'Perfection', freq: 792 },
+            { name: 'Perfection', freq: 798 },
             { name: 'Unity', freq: 852 }
         ];
 
@@ -582,8 +582,6 @@
             const day = now.getDate();
             
             // Simplified lunar phase calculation (real astronomical formula)
-            const c = Math.floor((year - 1900) / 100);
-            const e = 2 * c - Math.floor(c / 4);
             const jd = Math.floor(365.25 * (year + 4716)) + Math.floor(30.6001 * (month + 1)) + day - 1524.5;
             const daysSinceNewMoon = (jd - 2451550.1) % 29.53058867;
             const phase = daysSinceNewMoon / 29.53058867;
@@ -929,11 +927,30 @@
         // Copy witness stamp to clipboard
         function copyWitnessStamp() {
             const content = document.getElementById('witnessStampContent').textContent;
-            navigator.clipboard.writeText(content).then(() => {
-                alert('✅ Witness stamp copied to clipboard!');
-            }).catch(err => {
-                alert('❌ Failed to copy: ' + err);
-            });
+            
+            // Try modern clipboard API first
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(content).then(() => {
+                    alert('✅ Witness stamp copied to clipboard!');
+                }).catch(err => {
+                    alert('❌ Failed to copy: ' + err);
+                });
+            } else {
+                // Fallback for environments without clipboard API (e.g., HTTP)
+                const textArea = document.createElement('textarea');
+                textArea.value = content;
+                textArea.style.position = 'fixed';
+                textArea.style.opacity = '0';
+                document.body.appendChild(textArea);
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                    alert('✅ Witness stamp copied to clipboard!');
+                } catch (err) {
+                    alert('❌ Failed to copy. Please copy manually.');
+                }
+                document.body.removeChild(textArea);
+            }
         }
 
         // Keyboard shortcuts
