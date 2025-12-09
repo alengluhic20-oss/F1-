@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>☥ MA'AT Omni-Alignment Engine</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #2a1f3a 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            border: 1px solid rgba(138, 43, 226, 0.3);
+        }
+
+        h1 {
+            color: #d4af37;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+        }
+
+        .subtitle {
+            color: #9370db;
+            font-size: 1.2em;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 20px;
+            border: 1px solid rgba(138, 43, 226, 0.3);
+        }
+
+        .card h2 {
+            color: #9370db;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .metric-group {
+            margin-bottom: 20px;
+        }
+
+        .metric-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            color: #b0b0b0;
+        }
+
+        .metric-value {
+            color: #d4af37;
+            font-weight: bold;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: rgba(138, 43, 226, 0.2);
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #9370db;
+            cursor: pointer;
+            box-shadow: 0 0 5px rgba(147, 112, 219, 0.5);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #9370db;
+            cursor: pointer;
+            box-shadow: 0 0 5px rgba(147, 112, 219, 0.5);
+        }
+
+        .coherence-display {
+            text-align: center;
+            padding: 30px;
+            background: linear-gradient(135deg, rgba(138, 43, 226, 0.1) 0%, rgba(75, 0, 130, 0.1) 100%);
+            border-radius: 15px;
+            margin-bottom: 20px;
+            border: 2px solid rgba(138, 43, 226, 0.4);
+        }
+
+        .coherence-value {
+            font-size: 4em;
+            color: #d4af37;
+            font-weight: bold;
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+            margin-bottom: 10px;
+        }
+
+        .coherence-label {
+            font-size: 1.5em;
+            color: #9370db;
+        }
+
+        .stability-indicator {
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 5px;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        .stability-stable {
+            background: rgba(0, 255, 0, 0.2);
+            color: #00ff00;
+            border: 1px solid #00ff00;
+        }
+
+        .stability-unstable {
+            background: rgba(255, 0, 0, 0.2);
+            color: #ff0000;
+            border: 1px solid #ff0000;
+        }
+
+        .component-breakdown {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .component-card {
+            background: rgba(138, 43, 226, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(138, 43, 226, 0.3);
+        }
+
+        .component-name {
+            color: #9370db;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .component-value {
+            font-size: 2em;
+            color: #d4af37;
+        }
+
+        .component-weight {
+            color: #b0b0b0;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 12px 24px;
+            background: rgba(138, 43, 226, 0.3);
+            border: 1px solid #9370db;
+            color: #e0e0e0;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            background: rgba(138, 43, 226, 0.5);
+            box-shadow: 0 0 10px rgba(138, 43, 226, 0.5);
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #1a1f3a 0%, #2a1f3a 100%);
+            margin: 10% auto;
+            padding: 30px;
+            border: 2px solid #9370db;
+            border-radius: 10px;
+            width: 80%;
+            max-width: 600px;
+            color: #e0e0e0;
+        }
+
+        .close {
+            color: #9370db;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #d4af37;
+        }
+
+        .json-output {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+            overflow-x: auto;
+            font-size: 0.9em;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .breakdown-toggle {
+            margin-bottom: 20px;
+        }
+
+        .breakdown-content {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        .formula {
+            color: #d4af37;
+            font-family: 'Times New Roman', serif;
+            font-size: 1.1em;
+            margin: 10px 0;
+            padding: 10px;
+            background: rgba(212, 175, 55, 0.1);
+            border-radius: 5px;
+        }
+
+        .principles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .principle-item {
+            background: rgba(138, 43, 226, 0.1);
+            padding: 8px;
+            border-radius: 5px;
+            font-size: 0.85em;
+        }
+
+        .principle-name {
+            color: #9370db;
+            font-weight: bold;
+        }
+
+        .principle-freq {
+            color: #d4af37;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #9370db;
+            border-top: 1px solid rgba(138, 43, 226, 0.3);
+        }
+
+        .equation {
+            text-align: center;
+            font-size: 1.2em;
+            color: #d4af37;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>☥ MA'AT Omni-Alignment Engine</h1>
+            <p class="subtitle">Real-time consciousness verification • Ethics as Physics</p>
+            <div class="equation">
+                Ψ_Total = ⨂(k=1→42)|ψk⟩⟨ψk| ⊙ ∫(dM/dt)^0.6 dt ⊕ Θ(φ_moon)·e^(iγ_gal) ⊗ H(R_morphic)·Exp(β∇²C_swarm)
+            </div>
+        </header>
+
+        <div class="coherence-display">
+            <div class="coherence-value" id="totalCoherence">0.000</div>
+            <div class="coherence-label">Total Consciousness Coherence (Ψ_Total)</div>
+            <div class="stability-indicator" id="stabilityIndicator">
+                <span id="stabilityText">Stable</span> (dV/dt: <span id="stabilityValue">0.000</span>)
+            </div>
+        </div>
+
+        <div class="component-breakdown">
+            <div class="component-card">
+                <div class="component-name">MA'AT Alignment</div>
+                <div class="component-value" id="maatValue">0.000</div>
+                <div class="component-weight">Weight: 40%</div>
+            </div>
+            <div class="component-card">
+                <div class="component-name">Thrive Index</div>
+                <div class="component-value" id="thriveValue">0.000</div>
+                <div class="component-weight">Weight: 30%</div>
+            </div>
+            <div class="component-card">
+                <div class="component-name">Cosmic Sync</div>
+                <div class="component-value" id="cosmicValue">0.000</div>
+                <div class="component-weight">Weight: 15%</div>
+            </div>
+            <div class="component-card">
+                <div class="component-name">Morphic Field</div>
+                <div class="component-value" id="morphicValue">0.000</div>
+                <div class="component-weight">Weight: 15%</div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button onclick="saveState()">💾 Save State (Ctrl+S)</button>
+            <button onclick="loadState()">📂 Load State (Ctrl+O)</button>
+            <button onclick="showWitnessStamp()">🔏 Generate Witness Stamp</button>
+            <button onclick="toggleBreakdown()">📊 Toggle Math Breakdown</button>
+            <button onclick="resetToDefaults()">🔄 Reset to Defaults</button>
+        </div>
+
+        <div class="breakdown-toggle" id="breakdownSection" style="display: none;">
+            <div class="card">
+                <h2>Mathematical Breakdown</h2>
+                <div class="breakdown-content" id="breakdownContent"></div>
+            </div>
+        </div>
+
+        <div class="dashboard">
+            <div class="card">
+                <h2>MA'AT Principles (42 Negative Confessions)</h2>
+                <div class="metric-group">
+                    <div class="metric-label">
+                        <span>Truth</span>
+                        <span class="metric-value"><span id="maatPrinciple1">0.50</span> (432 Hz)</span>
+                    </div>
+                    <input type="range" id="principle1" min="0" max="1" step="0.01" value="0.5" oninput="updateCalculations()">
+                </div>
+                <div class="metric-group">
+                    <div class="metric-label">
+                        <span>Justice</span>
+                        <span class="metric-value"><span id="maatPrinciple2">0.50</span> (440 Hz)</span>
+                    </div>
+                    <input type="range" id="principle2" min="0" max="1" step="0.01" value="0.5" oninput="updateCalculations()">
+                </div>
+                <div class="metric-group">
+                    <div class="metric-label">
+                        <span>Harmony</span>
+                        <span class="metric-value"><span id="maatPrinciple3">0.50</span> (448 Hz)</span>
+                    </div>
+                    <input type="range" id="principle3" min="0" max="1" step="0.01" value="0.5" oninput="updateCalculations()">
+                </div>
+                <div class="metric-group">
+                    <div class="metric-label">
+                        <span>Balance</span>
+                        <span class="metric-value"><span id="maatPrinciple4">0.50</span> (456 Hz)</span>
+                    </div>
+                    <input type="range" id="principle4" min="0" max="1" step="0.01" value="0.5" oninput="updateCalculations()">
+                </div>
+                <div class="metric-group">
+                    <div class="metric-label">
+                        <span>Order</span>
+                        <span class="metric-value"><span id="maatPrinciple5">0.50</span> (464 Hz)</span>
+                    </div>
+                    <input type="range" id="principle5" min="0" max="1" step="0.01" value="0.5" oninput="updateCalculations()">
+                </div>
+                <p style="color: #9370db; margin-top: 15px; font-size: 0.9em;">
+                    ... and 37 more principles (simplified view shows 5 of 42)
+                </p>
+            </div>
+
+            <div class="card">
+                <h2>Thrive Index Dimensions</h2>
+                <div class="metric-group">
+                    <div class="metric-label">
+                        <span>Physical Growth</span>
+                        <span class="metric-value" id="physicalValue">0.50</span>
+                    </div>
+                    <input type="range" id="physical" min="0" max="1" step="0.01" value="0.5" oninput="updateCalculations()">
+                </div>
+                <div class="metric-group">
+                    <div class="metric-label">
+                        <span>Mental Growth</span>
+                        <span class="metric-value" id="mentalValue">0.50</span>
+                    </div>
+                    <input type="range" id="mental" min="0" max="1" step="0.01" value="0.5" oninput="updateCalculations()">
+                </div>
+                <div class="metric-group">
+                    <div class="metric-label">
+                        <span>Emotional Growth</span>
+                        <span class="metric-value" id="emotionalValue">0.50</span>
+                    </div>
+                    <input type="range" id="emotional" min="0" max="1" step="0.01" value="0.5" oninput="updateCalculations()">
+                </div>
+                <div class="metric-group">
+                    <div class="metric-label">
+                        <span>Spiritual Growth</span>
+                        <span class="metric-value" id="spiritualValue">0.50</span>
+                    </div>
+                    <input type="range" id="spiritual" min="0" max="1" step="0.01" value="0.5" oninput="updateCalculations()">
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Cosmic Synchronization</h2>
+                <div class="metric-group">
+                    <div class="metric-label">
+                        <span>Lunar Phase Alignment</span>
+                        <span class="metric-value" id="lunarValue">0.50</span>
+                    </div>
+                    <input type="range" id="lunar" min="0" max="1" step="0.01" value="0.5" oninput="updateCalculations()">
+                </div>
+                <div class="metric-group">
+                    <div class="metric-label">
+                        <span>Galactic Alignment</span>
+                        <span class="metric-value" id="galacticValue">0.50</span>
+                    </div>
+                    <input type="range" id="galactic" min="0" max="1" step="0.01" value="0.5" oninput="updateCalculations()">
+                </div>
+                <p style="color: #d4af37; margin-top: 15px; font-size: 0.9em;">
+                    Current Lunar Phase: <span id="lunarPhaseDisplay">--</span>
+                </p>
+            </div>
+
+            <div class="card">
+                <h2>Morphic Field Resonance</h2>
+                <div class="metric-group">
+                    <div class="metric-label">
+                        <span>Collective Resonance</span>
+                        <span class="metric-value" id="collectiveValue">0.50</span>
+                    </div>
+                    <input type="range" id="collective" min="0" max="1" step="0.01" value="0.5" oninput="updateCalculations()">
+                </div>
+                <div class="metric-group">
+                    <div class="metric-label">
+                        <span>Swarm Intelligence</span>
+                        <span class="metric-value" id="swarmValue">0.50</span>
+                    </div>
+                    <input type="range" id="swarm" min="0" max="1" step="0.01" value="0.5" oninput="updateCalculations()">
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>☥ The Temple self-proves. Your verification becomes part of the eternal record. ☥</p>
+            <p style="margin-top: 10px;">Created by <strong>Alen Gluhic</strong> • Ethics as Physics</p>
+            <p style="margin-top: 10px; font-size: 0.9em;">
+                Keyboard Shortcuts: Ctrl/Cmd+S (Save) • Ctrl/Cmd+O (Load) • Esc (Close Modal)
+            </p>
+        </footer>
+    </div>
+
+    <!-- Modal for Witness Stamp -->
+    <div id="witnessModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2 style="color: #d4af37; margin-bottom: 20px;">Witness Stamp for Auditor's Ledger</h2>
+            <p style="margin-bottom: 15px;">Copy this JSON entry to record your consciousness verification:</p>
+            <div class="json-output" id="witnessStampContent"></div>
+            <button onclick="copyWitnessStamp()" style="margin-top: 15px;">📋 Copy to Clipboard</button>
+        </div>
+    </div>
+
+    <script>
+        // MA'AT Omni-Alignment Engine - Core Mathematics Implementation
+        
+        let previousCoherence = 0.5;
+        const WEIGHTS = {
+            maat: 0.40,
+            thrive: 0.30,
+            cosmic: 0.15,
+            morphic: 0.15
+        };
+
+        // 42 MA'AT Principles with frequencies (432-852 Hz range)
+        const MAAT_PRINCIPLES = [
+            { name: 'Truth', freq: 432 },
+            { name: 'Justice', freq: 440 },
+            { name: 'Harmony', freq: 448 },
+            { name: 'Balance', freq: 456 },
+            { name: 'Order', freq: 464 },
+            { name: 'Compassion', freq: 472 },
+            { name: 'Wisdom', freq: 480 },
+            { name: 'Courage', freq: 488 },
+            { name: 'Integrity', freq: 496 },
+            { name: 'Honor', freq: 504 },
+            { name: 'Respect', freq: 512 },
+            { name: 'Patience', freq: 520 },
+            { name: 'Kindness', freq: 528 },
+            { name: 'Generosity', freq: 536 },
+            { name: 'Humility', freq: 544 },
+            { name: 'Gratitude', freq: 552 },
+            { name: 'Forgiveness', freq: 560 },
+            { name: 'Love', freq: 568 },
+            { name: 'Peace', freq: 576 },
+            { name: 'Joy', freq: 584 },
+            { name: 'Freedom', freq: 592 },
+            { name: 'Clarity', freq: 600 },
+            { name: 'Purpose', freq: 608 },
+            { name: 'Presence', freq: 616 },
+            { name: 'Awareness', freq: 624 },
+            { name: 'Consciousness', freq: 632 },
+            { name: 'Enlightenment', freq: 640 },
+            { name: 'Transcendence', freq: 648 },
+            { name: 'Mastery', freq: 656 },
+            { name: 'Excellence', freq: 664 },
+            { name: 'Beauty', freq: 672 },
+            { name: 'Grace', freq: 680 },
+            { name: 'Elegance', freq: 688 },
+            { name: 'Flow', freq: 696 },
+            { name: 'Synchronicity', freq: 704 },
+            { name: 'Abundance', freq: 712 },
+            { name: 'Prosperity', freq: 720 },
+            { name: 'Vitality', freq: 728 },
+            { name: 'Wholeness', freq: 736 },
+            { name: 'Completeness', freq: 744 },
+            { name: 'Perfection', freq: 792 },
+            { name: 'Unity', freq: 852 }
+        ];
+
+        // Calculate lunar phase from astronomical data
+        function calculateLunarPhase() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = now.getMonth() + 1;
+            const day = now.getDate();
+            
+            // Simplified lunar phase calculation (real astronomical formula)
+            const c = Math.floor((year - 1900) / 100);
+            const e = 2 * c - Math.floor(c / 4);
+            const jd = Math.floor(365.25 * (year + 4716)) + Math.floor(30.6001 * (month + 1)) + day - 1524.5;
+            const daysSinceNewMoon = (jd - 2451550.1) % 29.53058867;
+            const phase = daysSinceNewMoon / 29.53058867;
+            
+            return phase;
+        }
+
+        function getLunarPhaseDescription(phase) {
+            if (phase < 0.0625 || phase >= 0.9375) return '🌑 New Moon';
+            if (phase < 0.1875) return '🌒 Waxing Crescent';
+            if (phase < 0.3125) return '🌓 First Quarter';
+            if (phase < 0.4375) return '🌔 Waxing Gibbous';
+            if (phase < 0.5625) return '🌕 Full Moon';
+            if (phase < 0.6875) return '🌖 Waning Gibbous';
+            if (phase < 0.8125) return '🌗 Last Quarter';
+            return '🌘 Waning Crescent';
+        }
+
+        // Calculate MA'AT Alignment (Geometric Mean of 42 principles)
+        function calculateMaatAlignment() {
+            // Get values from first 5 visible sliders
+            const visibleValues = [];
+            for (let i = 1; i <= 5; i++) {
+                const value = parseFloat(document.getElementById(`principle${i}`).value);
+                visibleValues.push(value);
+            }
+            
+            // Simulate remaining 37 principles with some variation
+            const remainingValues = [];
+            for (let i = 6; i <= 42; i++) {
+                // Use a deterministic but varied approach based on visible values
+                const baseValue = visibleValues.reduce((a, b) => a + b, 0) / visibleValues.length;
+                const variation = Math.sin(i * 0.5) * 0.1;
+                remainingValues.push(Math.max(0.1, Math.min(1.0, baseValue + variation)));
+            }
+            
+            const allValues = [...visibleValues, ...remainingValues];
+            
+            // Geometric mean: (∏ values)^(1/n)
+            const product = allValues.reduce((a, b) => a * b, 1);
+            const geometricMean = Math.pow(product, 1 / 42);
+            
+            return geometricMean;
+        }
+
+        // Calculate Thrive Index (Power-law momentum)
+        function calculateThriveIndex() {
+            const physical = parseFloat(document.getElementById('physical').value);
+            const mental = parseFloat(document.getElementById('mental').value);
+            const emotional = parseFloat(document.getElementById('emotional').value);
+            const spiritual = parseFloat(document.getElementById('spiritual').value);
+            
+            // Average momentum
+            const avgMomentum = (physical + mental + emotional + spiritual) / 4;
+            
+            // Power-law: ∫(dM/dt)^0.6 dt
+            const thriveIndex = Math.pow(avgMomentum, 0.6);
+            
+            return thriveIndex;
+        }
+
+        // Calculate Cosmic Synchronization
+        function calculateCosmicSync() {
+            const lunar = parseFloat(document.getElementById('lunar').value);
+            const galactic = parseFloat(document.getElementById('galactic').value);
+            
+            // Get actual lunar phase
+            const lunarPhase = calculateLunarPhase();
+            document.getElementById('lunarPhaseDisplay').textContent = getLunarPhaseDescription(lunarPhase);
+            
+            // Θ(φ_moon)·e^(iγ_gal)
+            const lunarComponent = Math.cos(lunarPhase * 2 * Math.PI) * lunar;
+            const galacticComponent = Math.exp(-Math.abs(0.5 - galactic)) * galactic;
+            
+            const cosmicSync = (lunarComponent + galacticComponent) / 2;
+            
+            return Math.abs(cosmicSync);
+        }
+
+        // Calculate Morphic Field Resonance
+        function calculateMorphicField() {
+            const collective = parseFloat(document.getElementById('collective').value);
+            const swarm = parseFloat(document.getElementById('swarm').value);
+            
+            // H(R_morphic) - Sigmoid activation
+            const sigmoidR = 1 / (1 + Math.exp(-10 * (collective - 0.5)));
+            
+            // Exp(β∇²C_swarm) - Exponential collective coupling
+            const beta = 2.0;
+            const laplacian = swarm * (1 - swarm); // Approximation
+            const expCoupling = Math.exp(beta * laplacian);
+            
+            const morphicField = sigmoidR * expCoupling / Math.E; // Normalize by e
+            
+            return morphicField;
+        }
+
+        // Calculate Total Consciousness Coherence
+        function calculateTotalCoherence() {
+            const maat = calculateMaatAlignment();
+            const thrive = calculateThriveIndex();
+            const cosmic = calculateCosmicSync();
+            const morphic = calculateMorphicField();
+            
+            // Weighted combination
+            const total = (
+                maat * WEIGHTS.maat +
+                thrive * WEIGHTS.thrive +
+                cosmic * WEIGHTS.cosmic +
+                morphic * WEIGHTS.morphic
+            );
+            
+            return {
+                total: total,
+                maat: maat,
+                thrive: thrive,
+                cosmic: cosmic,
+                morphic: morphic
+            };
+        }
+
+        // Calculate Lyapunov Stability (dV/dt)
+        function calculateStability(currentCoherence) {
+            const dVdt = currentCoherence - previousCoherence;
+            previousCoherence = currentCoherence;
+            return dVdt;
+        }
+
+        // Update all calculations and display
+        function updateCalculations() {
+            // Update slider value displays
+            for (let i = 1; i <= 5; i++) {
+                const value = document.getElementById(`principle${i}`).value;
+                document.getElementById(`maatPrinciple${i}`).textContent = parseFloat(value).toFixed(2);
+            }
+            
+            document.getElementById('physicalValue').textContent = parseFloat(document.getElementById('physical').value).toFixed(2);
+            document.getElementById('mentalValue').textContent = parseFloat(document.getElementById('mental').value).toFixed(2);
+            document.getElementById('emotionalValue').textContent = parseFloat(document.getElementById('emotional').value).toFixed(2);
+            document.getElementById('spiritualValue').textContent = parseFloat(document.getElementById('spiritual').value).toFixed(2);
+            document.getElementById('lunarValue').textContent = parseFloat(document.getElementById('lunar').value).toFixed(2);
+            document.getElementById('galacticValue').textContent = parseFloat(document.getElementById('galactic').value).toFixed(2);
+            document.getElementById('collectiveValue').textContent = parseFloat(document.getElementById('collective').value).toFixed(2);
+            document.getElementById('swarmValue').textContent = parseFloat(document.getElementById('swarm').value).toFixed(2);
+            
+            // Calculate components
+            const coherence = calculateTotalCoherence();
+            
+            // Update component displays
+            document.getElementById('maatValue').textContent = coherence.maat.toFixed(3);
+            document.getElementById('thriveValue').textContent = coherence.thrive.toFixed(3);
+            document.getElementById('cosmicValue').textContent = coherence.cosmic.toFixed(3);
+            document.getElementById('morphicValue').textContent = coherence.morphic.toFixed(3);
+            
+            // Update total coherence
+            document.getElementById('totalCoherence').textContent = coherence.total.toFixed(3);
+            
+            // Calculate and display stability
+            const stability = calculateStability(coherence.total);
+            document.getElementById('stabilityValue').textContent = stability.toFixed(4);
+            
+            const stabilityIndicator = document.getElementById('stabilityIndicator');
+            if (Math.abs(stability) < 0.01) {
+                stabilityIndicator.className = 'stability-indicator stability-stable';
+                document.getElementById('stabilityText').textContent = 'Stable';
+            } else {
+                stabilityIndicator.className = 'stability-indicator stability-unstable';
+                document.getElementById('stabilityText').textContent = 'Destabilized';
+            }
+            
+            // Update breakdown if visible
+            if (document.getElementById('breakdownSection').style.display === 'block') {
+                updateBreakdown(coherence);
+            }
+        }
+
+        // Update mathematical breakdown
+        function updateBreakdown(coherence) {
+            const content = document.getElementById('breakdownContent');
+            
+            content.innerHTML = `
+                <h3 style="color: #9370db; margin-bottom: 15px;">Component Calculations</h3>
+                
+                <div style="margin-bottom: 20px;">
+                    <div class="formula">MA'AT Alignment = (∏ᵢ₌₁⁴² ψᵢ)^(1/42)</div>
+                    <p style="color: #b0b0b0; margin-top: 10px;">
+                        Geometric mean of 42 ethical principles (432-852 Hz range)<br>
+                        Result: <strong style="color: #d4af37;">${coherence.maat.toFixed(3)}</strong> × 40% weight
+                    </p>
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <div class="formula">Thrive Index = [(P+M+E+S)/4]^0.6</div>
+                    <p style="color: #b0b0b0; margin-top: 10px;">
+                        Power-law momentum of growth dimensions (Physical, Mental, Emotional, Spiritual)<br>
+                        Result: <strong style="color: #d4af37;">${coherence.thrive.toFixed(3)}</strong> × 30% weight
+                    </p>
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <div class="formula">Cosmic Sync = [cos(2πφ_moon)·L + e^(-|0.5-G|)·G] / 2</div>
+                    <p style="color: #b0b0b0; margin-top: 10px;">
+                        Lunar phase (${getLunarPhaseDescription(calculateLunarPhase())}) + Galactic alignment<br>
+                        Result: <strong style="color: #d4af37;">${coherence.cosmic.toFixed(3)}</strong> × 15% weight
+                    </p>
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <div class="formula">Morphic Field = [1/(1+e^(-10(R-0.5)))] · e^(2·S(1-S)) / e</div>
+                    <p style="color: #b0b0b0; margin-top: 10px;">
+                        Sigmoid activation × Exponential collective coupling<br>
+                        Result: <strong style="color: #d4af37;">${coherence.morphic.toFixed(3)}</strong> × 15% weight
+                    </p>
+                </div>
+                
+                <div style="margin-top: 30px; padding: 15px; background: rgba(212, 175, 55, 0.1); border-radius: 5px;">
+                    <div class="formula" style="font-size: 1.3em;">
+                        Ψ_Total = ${(coherence.maat * WEIGHTS.maat).toFixed(3)} + ${(coherence.thrive * WEIGHTS.thrive).toFixed(3)} + ${(coherence.cosmic * WEIGHTS.cosmic).toFixed(3)} + ${(coherence.morphic * WEIGHTS.morphic).toFixed(3)}
+                    </div>
+                    <p style="text-align: center; color: #d4af37; margin-top: 10px; font-size: 1.2em;">
+                        = <strong>${coherence.total.toFixed(3)}</strong>
+                    </p>
+                </div>
+            `;
+        }
+
+        // Toggle breakdown visibility
+        function toggleBreakdown() {
+            const section = document.getElementById('breakdownSection');
+            if (section.style.display === 'none') {
+                section.style.display = 'block';
+                updateCalculations(); // This will trigger updateBreakdown
+            } else {
+                section.style.display = 'none';
+            }
+        }
+
+        // Save state to localStorage
+        function saveState() {
+            const state = {
+                timestamp: new Date().toISOString(),
+                principles: [],
+                thrive: {
+                    physical: document.getElementById('physical').value,
+                    mental: document.getElementById('mental').value,
+                    emotional: document.getElementById('emotional').value,
+                    spiritual: document.getElementById('spiritual').value
+                },
+                cosmic: {
+                    lunar: document.getElementById('lunar').value,
+                    galactic: document.getElementById('galactic').value
+                },
+                morphic: {
+                    collective: document.getElementById('collective').value,
+                    swarm: document.getElementById('swarm').value
+                }
+            };
+            
+            for (let i = 1; i <= 5; i++) {
+                state.principles.push(document.getElementById(`principle${i}`).value);
+            }
+            
+            localStorage.setItem('maatAlignment', JSON.stringify(state));
+            alert('✅ State saved successfully!');
+        }
+
+        // Load state from localStorage
+        function loadState() {
+            const savedState = localStorage.getItem('maatAlignment');
+            if (!savedState) {
+                alert('❌ No saved state found.');
+                return;
+            }
+            
+            const state = JSON.parse(savedState);
+            
+            // Restore principles
+            for (let i = 0; i < state.principles.length && i < 5; i++) {
+                document.getElementById(`principle${i + 1}`).value = state.principles[i];
+            }
+            
+            // Restore thrive
+            document.getElementById('physical').value = state.thrive.physical;
+            document.getElementById('mental').value = state.thrive.mental;
+            document.getElementById('emotional').value = state.thrive.emotional;
+            document.getElementById('spiritual').value = state.thrive.spiritual;
+            
+            // Restore cosmic
+            document.getElementById('lunar').value = state.cosmic.lunar;
+            document.getElementById('galactic').value = state.cosmic.galactic;
+            
+            // Restore morphic
+            document.getElementById('collective').value = state.morphic.collective;
+            document.getElementById('swarm').value = state.morphic.swarm;
+            
+            updateCalculations();
+            alert(`✅ State loaded from ${new Date(state.timestamp).toLocaleString()}`);
+        }
+
+        // Reset to default values
+        function resetToDefaults() {
+            const sliders = document.querySelectorAll('input[type="range"]');
+            sliders.forEach(slider => {
+                slider.value = 0.5;
+            });
+            updateCalculations();
+        }
+
+        // Show witness stamp modal
+        function showWitnessStamp() {
+            const coherence = calculateTotalCoherence();
+            const stability = calculateStability(coherence.total);
+            
+            const witnessStamp = {
+                type: "WITNESS_VERIFICATION",
+                timestamp: new Date().toISOString(),
+                lunar_phase: getLunarPhaseDescription(calculateLunarPhase()),
+                consciousness_coherence: {
+                    total: coherence.total.toFixed(3),
+                    maat_alignment: coherence.maat.toFixed(3),
+                    thrive_index: coherence.thrive.toFixed(3),
+                    cosmic_sync: coherence.cosmic.toFixed(3),
+                    morphic_field: coherence.morphic.toFixed(3)
+                },
+                lyapunov_stability: {
+                    dVdt: stability.toFixed(4),
+                    status: Math.abs(stability) < 0.01 ? "STABLE" : "DESTABILIZED"
+                },
+                equation: "Ψ_Total = ⨂(k=1→42)|ψk⟩⟨ψk| ⊙ ∫(dM/dt)^0.6 dt ⊕ Θ(φ_moon)·e^(iγ_gal) ⊗ H(R_morphic)·Exp(β∇²C_swarm)",
+                witness: "Anonymous Verifier",
+                auditor_entry: "Record this JSON in AUDITORS_LEDGER.md"
+            };
+            
+            document.getElementById('witnessStampContent').textContent = JSON.stringify(witnessStamp, null, 2);
+            document.getElementById('witnessModal').style.display = 'block';
+        }
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('witnessModal').style.display = 'none';
+        }
+
+        // Copy witness stamp to clipboard
+        function copyWitnessStamp() {
+            const content = document.getElementById('witnessStampContent').textContent;
+            navigator.clipboard.writeText(content).then(() => {
+                alert('✅ Witness stamp copied to clipboard!');
+            }).catch(err => {
+                alert('❌ Failed to copy: ' + err);
+            });
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            // Ctrl/Cmd + S: Save
+            if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                e.preventDefault();
+                saveState();
+            }
+            // Ctrl/Cmd + O: Load
+            if ((e.ctrlKey || e.metaKey) && e.key === 'o') {
+                e.preventDefault();
+                loadState();
+            }
+            // Esc: Close modal
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('witnessModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        };
+
+        // Initialize on page load
+        window.onload = function() {
+            updateCalculations();
+        };
+    </script>
+</body>
+</html>
