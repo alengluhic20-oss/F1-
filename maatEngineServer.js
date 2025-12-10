@@ -119,8 +119,16 @@ app.use(cors());
 app.use(bodyParser.json());
 
 app.post('/validate', (req, res) => {
-  const result = validateWithMaat(req.body.message);
-  res.json(result);
+  try {
+    if (!req.body || typeof req.body.message !== 'string' || req.body.message.trim() === '') {
+      return res.status(400).json({ error: 'Message is required' });
+    }
+    const result = validateWithMaat(req.body.message);
+    res.json(result);
+  } catch (error) {
+    console.error('Validation error:', error);
+    res.status(500).json({ error: 'Validation failed' });
+  }
 });
 
 const HTTP_PORT = 3000;
