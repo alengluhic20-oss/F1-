@@ -131,7 +131,7 @@ export const CosmosVisualization: React.FC<CosmosVisualizationProps> = ({
       }
 
       // Draw recent metrics as particles
-      metrics.slice(-10).forEach((metric, idx) => {
+      metrics.slice(-10).forEach((_metric, idx) => {
         const age = (10 - idx) / 10;
         const angle = time + idx * 0.5;
         const distance = 100 + age * 50;
