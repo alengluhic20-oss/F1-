@@ -64,7 +64,6 @@ export function useDeploymentRitual() {
 
   const continueRitual = useCallback(() => {
     deploymentRitual.continueRitual();
-    if (!deploymentMetricsStream) return;
     deploymentMetricsStream.start(2000);
   }, []);
 

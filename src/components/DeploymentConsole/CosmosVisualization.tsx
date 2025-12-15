@@ -1,6 +1,6 @@
 /**
  * Cosmos Visualization - The Feather Scale
- * Three.js visualization of Ma'at's judgment scale
+ * Canvas 2D visualization of Ma'at's judgment scale with sacred geometry
  */
 
 import React, { useRef, useEffect } from 'react';
