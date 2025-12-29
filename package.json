@@ -6,7 +6,7 @@
     "lint": "echo 'Running MAAT validation checks...'",
     "lint:fix": "echo 'Applying MAAT automatic rectification...' && exit 0",
     "test": "echo 'Running MAAT recursive validation...'",
-    "validate": "node -e \"const fs=require('fs'); const data=fs.readFileSync('logs/logs_result.json'); JSON.parse(data); console.log('✓ logs_result.json is valid');\"",
+    "validate": "node -e \"try { const data = require('fs').readFileSync('logs/logs_result.json', 'utf8'); JSON.parse(data); console.log('✓ logs_result.json is valid'); } catch(e) { console.error('✗ logs_result.json validation failed:', e.message); process.exit(1); }\"",
     "stability-check": "cat stability_log.txt && cat logs/logs_result.json"
   },
   "keywords": [

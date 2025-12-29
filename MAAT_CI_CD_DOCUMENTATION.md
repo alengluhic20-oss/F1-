@@ -104,12 +104,14 @@ Check the workflow artifacts for:
 
 ## Integration with MAAT Validation Engine
 
-This CI/CD system integrates with the MAAT Consciousness Validation Engine (`packages/maat-consciousness/services/fullValidationEngine.ts`) which provides:
+This CI/CD system is designed to integrate with MAAT Consciousness Validation engines that provide:
 
 - 42 Ma'at Principles validation
 - Swarm-based consensus evaluation
 - Lyapunov stability analysis
 - Comprehensive reporting
+
+The system can be extended to connect with additional validation services as they become available.
 
 ## Troubleshooting
 

@@ -27,9 +27,10 @@ jobs:
           mkdir -p logs
           
           # Initialize logs_result.json with stable state
-          cat > logs/logs_result.json << 'EOF'
+          TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          cat > logs/logs_result.json << EOF
           {
-            "timestamp": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")",
+            "timestamp": "$TIMESTAMP",
             "system_state": "INITIALIZING",
             "lyapunov_exponent": 0.0,
             "stability_score": 1.0,
@@ -63,10 +64,11 @@ jobs:
           fi
           
           # Update logs_result.json with validation results
+          TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
           if [ $EXIT_CODE -eq 0 ]; then
-            cat > logs/logs_result.json << 'EOF'
+            cat > logs/logs_result.json << EOF
           {
-            "timestamp": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")",
+            "timestamp": "$TIMESTAMP",
             "system_state": "STABLE",
             "lyapunov_exponent": -0.05,
             "stability_score": 1.0,
@@ -78,9 +80,9 @@ jobs:
           EOF
             echo "State: STABLE" > stability_log.txt
           else
-            cat > logs/logs_result.json << 'EOF'
+            cat > logs/logs_result.json << EOF
           {
-            "timestamp": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")",
+            "timestamp": "$TIMESTAMP",
             "system_state": "UNSTABLE",
             "lyapunov_exponent": 0.15,
             "stability_score": 0.6,
@@ -114,9 +116,10 @@ jobs:
           # Log the recovery state for Recursive Integrity Check
           echo "State: RECOVERING" > stability_log.txt
           
-          cat > logs/logs_result.json << 'EOF'
+          TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          cat > logs/logs_result.json << EOF
           {
-            "timestamp": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")",
+            "timestamp": "$TIMESTAMP",
             "system_state": "RECOVERING",
             "lyapunov_exponent": 0.02,
             "stability_score": 0.85,
@@ -164,7 +167,8 @@ jobs:
             sleep 0.1
           done
           
-          CONFIDENCE=$(echo "scale=2; $PASS_COUNT / $MAX_ITERATIONS" | bc)
+          # Calculate confidence using awk (bc not available by default)
+          CONFIDENCE=$(awk "BEGIN {printf \"%.2f\", $PASS_COUNT / $MAX_ITERATIONS}")
           echo "==================================="
           echo "Validation Results:"
           echo "  Passes: $PASS_COUNT/$MAX_ITERATIONS"
@@ -172,10 +176,11 @@ jobs:
           echo "==================================="
           
           # Update final state
+          TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
           if [ "$PASS_COUNT" -ge "$MAX_ITERATIONS" ]; then
             cat > logs/logs_result.json << EOF
           {
-            "timestamp": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")",
+            "timestamp": "$TIMESTAMP",
             "system_state": "STABLE",
             "lyapunov_exponent": -0.1,
             "stability_score": 1.0,
@@ -192,7 +197,7 @@ jobs:
           else
             cat > logs/logs_result.json << EOF
           {
-            "timestamp": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")",
+            "timestamp": "$TIMESTAMP",
             "system_state": "CONVERGING",
             "lyapunov_exponent": 0.01,
             "stability_score": 0.9,
