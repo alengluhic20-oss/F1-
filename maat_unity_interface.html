@@ -410,7 +410,10 @@
       if (oscillator) {
         try {
           oscillator.stop();
-        } catch (e) {}
+        } catch (e) {
+          // Ignoring errors when stopping oscillator (e.g., already stopped), but log for debugging
+          console.warn("Oscillator stop error (may be harmless):", e);
+        }
       }
 
       // Resume audio context if suspended (browser autoplay policy)
