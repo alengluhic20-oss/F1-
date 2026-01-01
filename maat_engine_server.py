@@ -61,11 +61,16 @@ class ConnectionManager:
         print(f"☥ Client disconnected. Total: {len(self.active_connections)}")
 
     async def broadcast(self, message: str):
-        for connection in self.active_connections:
+        for connection in self.active_connections[:]:  # Copy to avoid modification during iteration
             try:
                 await connection.send_text(message)
-            except Exception:
-                pass
+            except WebSocketDisconnect:
+                # Client disconnected, remove from active connections
+                self.active_connections.remove(connection)
+                print("☥ Client disconnected during broadcast.")
+            except Exception as e:
+                # Log unexpected exceptions for debugging
+                print(f"Error sending message to client: {e}")
 
 manager = ConnectionManager()
 
