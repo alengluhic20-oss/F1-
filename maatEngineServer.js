@@ -121,7 +121,7 @@ app.use(bodyParser.json());
 app.post('/validate', (req, res) => {
   try {
     if (!req.body || typeof req.body.message !== 'string' || req.body.message.trim() === '') {
-      return res.status(400).json({ error: 'Message is required' });
+      return res.status(400).json({ error: "Request body must contain a non-empty 'message' field" });
     }
     const result = validateWithMaat(req.body.message);
     res.json(result);
