@@ -546,13 +546,13 @@
     // Add particle system for cosmic effect
     const particlesGeometry = new THREE.BufferGeometry();
     const particlesCount = 100;
-    const positions = new Float32Array(particlesCount * 3);
+    const particlePositions = new Float32Array(particlesCount * 3);
     
     for (let i = 0; i < particlesCount * 3; i++) {
-      positions[i] = (Math.random() - 0.5) * 10;
+      particlePositions[i] = (Math.random() - 0.5) * 10;
     }
     
-    particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    particlesGeometry.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3));
     const particlesMaterial = new THREE.PointsMaterial({
       color: 0xD4AF37,
       size: 0.02,
