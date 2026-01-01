@@ -139,7 +139,7 @@ def validate_with_maat(user_message: str) -> Dict:
             "lunar": lunar_sync,
             "galactic": galactic_sync
         },
-        "stable": coherence_score > 0.5,
+        "stable": (coherence_score * 100) > 50,
         "response": response,
         "recommendation": f"Focus on embodying {detected_principles[0]['name']}." if detected_principles 
                          else "Meditate on the MA'AT principles.",
