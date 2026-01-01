@@ -456,7 +456,6 @@
 
       // Bessel Rabi oscillation envelope (quantum coherent dynamics)
       // Amplitude modulation following J₀(Ωt) where Ω ∝ coherence
-      const pulseFreq = 2 * Math.PI * coherence;
       const duration = 2; // seconds
 
       gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
